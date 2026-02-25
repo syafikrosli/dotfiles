@@ -1,0 +1,372 @@
+// ===================================================
+// Miscellaneous
+// ===================================================
+spawn-sh-at-startup "cliphist wipe"
+spawn-sh-at-startup "waypaper --restore"
+spawn-sh-at-startup "wl-paste --type text --watch cliphist store"
+spawn-sh-at-startup "sleep 1.5 && /usr/lib/mate-polkit/polkit-mate-authentication-agent-1"
+
+prefer-no-csd
+
+screenshot-path "~/Pictures/Screenshots/Screenshot from %d-%m-%Y %H-%M-%S.png"
+
+environment {
+    GDK_BACKEND "wayland,x11,*"
+    CLUTTER_BACKEND "wayland"
+
+    QT_QPA_PLATFORM "wayland;xcb"
+    QT_QPA_PLATFORMTHEME "kde"
+    QT_QUICK_CONTROLS_STYLE "org.kde.desktop"
+    QT_WAYLAND_DISABLE_WINDOWDECORATION "1"
+    ELECTRON_OZONE_PLATFORM_HINT "wayland"
+
+    XCURSOR_THEME "Bibata-Modern-Ice"
+    XCURSOR_SIZE "22"
+
+    EDITOR "nvim"
+    VISUAL "nvim"
+}
+
+cursor {
+    xcursor-theme "Bibata-Modern-Ice"
+    xcursor-size 22
+}
+
+overview {
+    zoom 0.6
+    backdrop-color "#272e33"
+}
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+// ===================================================
+// Input
+// ===================================================
+input {
+    keyboard {
+        xkb {
+            layout "us"
+            options "caps:escape,shift:both_capslock"
+        }
+
+        repeat-delay 600
+        repeat-rate 25
+    }
+
+    touchpad {
+        tap
+        natural-scroll
+    }
+}
+
+// ===================================================
+// Outputs
+// ===================================================
+output "eDP-1" {
+    mode "1366x768@59.973"
+    scale 1
+    position x=0 y=0
+
+    hot-corners {
+        off
+    }
+}
+
+// ===================================================
+// Layout
+// ===================================================
+layout {
+    gaps 4
+    center-focused-column "always"
+    always-center-single-column
+    default-column-display "tabbed"
+
+    preset-column-widths {
+        proportion 0.63
+        proportion 0.83
+        proportion 0.93
+    }
+
+    default-column-width { proportion 0.83; }
+
+    preset-window-heights {
+        proportion 0.5
+        proportion 1.0
+    }
+
+    focus-ring {
+        off
+    }
+
+    border {
+        on
+        width 1
+        active-color "#a7c080"
+        inactive-color "#272e33"
+        urgent-color "#e67e80"
+    }
+
+    shadow {
+        off
+    }
+
+    tab-indicator {
+        on
+        hide-when-single-tab
+        place-within-column
+        gap 4
+        width 4
+        position "top"
+        length total-proportion=1.0
+        gaps-between-tabs 4
+        active-color "#a7c080"
+        inactive-color "#272e33"
+        urgent-color "#e67e80"
+    }
+
+    insert-hint {
+        on
+        color "#a7c08080"
+    }
+}
+
+// ===================================================
+// Animations
+// ===================================================
+animations {
+    on
+
+    workspace-switch {
+        spring damping-ratio=0.95 stiffness=700 epsilon=0.0001
+    }
+
+    window-open {
+        duration-ms 150
+        curve "ease-out-expo"
+    }
+
+    window-close {
+        duration-ms 150
+        curve "ease-out-quad"
+    }
+
+    horizontal-view-movement {
+        spring damping-ratio=1.0 stiffness=700 epsilon=0.0001
+    }
+
+    window-movement {
+        spring damping-ratio=1.0 stiffness=700 epsilon=0.0001
+    }
+
+    window-resize {
+        spring damping-ratio=1.0 stiffness=700 epsilon=0.0001
+    }
+
+    config-notification-open-close {
+        spring damping-ratio=0.6 stiffness=1000 epsilon=0.001
+    }
+
+    exit-confirmation-open-close {
+        spring damping-ratio=0.6 stiffness=500 epsilon=0.01
+    }
+
+    screenshot-ui-open {
+        duration-ms 200
+        curve "ease-out-quad"
+    }
+
+    overview-open-close {
+        spring damping-ratio=1.0 stiffness=700 epsilon=0.0001
+    }
+
+    recent-windows-close {
+        spring damping-ratio=1.0 stiffness=700 epsilon=0.001
+    }
+}
+
+// ===================================================
+// Key bindings
+// ===================================================
+binds {
+    Super+Return { spawn "kitty"; }
+    Super+D { spawn "fuzzel"; }
+    Super+E { spawn "thunar"; }
+    Super+Alt+L { spawn-sh "loginctl lock-session $XDG_SESSION_ID"; }
+    Super+N { spawn-sh "swaync-client -t"; }
+    Super+V { spawn-sh "cliphist list | fuzzel --dmenu --with-nth 2 | cliphist decode | wl-copy"; }
+    Super+Alt+Shift+W { spawn-sh "~/.config/theme-system/bin/waybar-toggle"; }
+    Super+Alt+Shift+T { spawn-sh "~/.config/theme-system/bin/theme-toggle"; }
+
+    Super+BracketLeft  { consume-or-expel-window-left; }
+    Super+BracketRight { consume-or-expel-window-right; }
+
+    Super+R { switch-preset-column-width; }
+    Super+Shift+R { switch-preset-window-height; }
+    Super+Space { toggle-column-tabbed-display; }
+    Super+Ctrl+R { reset-window-height; }
+    Super+F { maximize-column; }
+    Super+Shift+F { fullscreen-window; }
+    Super+Ctrl+F { maximize-window-to-edges; }
+    Super+Ctrl+V { toggle-window-floating; }
+    Super+Shift+V { switch-focus-between-floating-and-tiling; }
+
+    Print { screenshot; }
+    Ctrl+Print { screenshot-screen; }
+    Alt+Print { screenshot-window; }
+
+    Super+Minus { set-column-width "-10%"; }
+    Super+Equal { set-column-width "+10%"; }
+
+    Super+Shift+Minus { set-window-height "-10%"; }
+    Super+Shift+Equal { set-window-height "+10%"; }
+
+    Super+O repeat=false { toggle-overview; }
+    Super+Q repeat=false { close-window; }
+
+    Super+Alt+P { spawn-sh "systemctl poweroff"; }
+    Super+Alt+R { spawn-sh "systemctl reboot"; }
+    Super+Alt+W { spawn-sh "systemctl --user restart waybar.service"; }
+
+    XF86AudioMute        allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+
+    XF86AudioPlay  allow-when-locked=true { spawn-sh "playerctl play-pause"; }
+    XF86AudioPause allow-when-locked=true { spawn-sh "playerctl play-pause"; }
+    XF86AudioPrev  allow-when-locked=true { spawn-sh "playerctl previous"; }
+    XF86AudioNext  allow-when-locked=true { spawn-sh "playerctl next"; }
+
+    XF86MonBrightnessDown allow-when-locked=true { spawn-sh "brightnessctl --class=backlight set 5%-"; }
+    XF86MonBrightnessUp   allow-when-locked=true { spawn-sh "brightnessctl --class=backlight set +5%"; }
+
+    Super+J { focus-window-up; }
+    Super+K { focus-window-down; }
+    Super+H { focus-column-left; }
+    Super+L { focus-column-right; }
+
+    Super+Shift+J { move-window-up; }
+    Super+Shift+K { move-window-down; }
+    Super+Shift+H { move-column-left; }
+    Super+Shift+L { move-column-right; }
+
+    Super+Page_Up   { focus-workspace-up; }
+    Super+Page_Down { focus-workspace-down; }
+
+    Super+Ctrl+Page_Up   { move-column-to-workspace-up; }
+    Super+Ctrl+Page_Down { move-column-to-workspace-down; }
+
+    Super+1 { focus-workspace 1; }
+    Super+2 { focus-workspace 2; }
+    Super+3 { focus-workspace 3; }
+    Super+4 { focus-workspace 4; }
+    Super+5 { focus-workspace 5; }
+    Super+6 { focus-workspace 6; }
+    Super+7 { focus-workspace 7; }
+    Super+8 { focus-workspace 8; }
+    Super+9 { focus-workspace 9; }
+
+    Super+Shift+1 { move-column-to-workspace 1; }
+    Super+Shift+2 { move-column-to-workspace 2; }
+    Super+Shift+3 { move-column-to-workspace 3; }
+    Super+Shift+4 { move-column-to-workspace 4; }
+    Super+Shift+5 { move-column-to-workspace 5; }
+    Super+Shift+6 { move-column-to-workspace 6; }
+    Super+Shift+7 { move-column-to-workspace 7; }
+    Super+Shift+8 { move-column-to-workspace 8; }
+    Super+Shift+9 { move-column-to-workspace 9; }
+
+    Super+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+
+    Super+Shift+E { quit skip-confirmation=true; }
+}
+
+// ===================================================
+// Window rules
+// ===================================================
+window-rule {
+    match app-id=r#"^org\.wezfurlong\.wezterm$"#
+    match app-id="code.*"
+    match app-id="codium"
+    match app-id="org.kde.*"
+
+    default-column-width {}
+}
+
+window-rule {
+    match app-id="firefox$" title="^Picture-in-Picture$"
+
+    open-floating true
+}
+
+window-rule {
+    match app-id="^org.keepassxc.KeePassXC$"
+    match app-id="^org.gnome.World.Secrets$"
+
+    block-out-from "screen-capture"
+    // block-out-from "screencast"
+}
+
+window-rule {
+    geometry-corner-radius 0
+    clip-to-geometry true
+    open-maximized-to-edges false
+}
+
+window-rule {
+    match app-id="^org.gnome.*" title="^$"
+
+    geometry-corner-radius 16
+    clip-to-geometry true
+}
+
+window-rule {
+    match app-id="libreoffice-.*"
+
+    default-column-width { proportion 1.0; }
+}
+
+window-rule {
+    match app-id="brave-browser"
+    match app-id="brave-web.*."
+    match app-id="firefox"
+
+    default-column-width { proportion 0.93; }
+}
+
+window-rule {
+    match app-id="org.gnome.Calculator" title="Calculator"
+
+    default-column-width  { proportion 0.52; }
+    default-window-height { proportion 0.81; }
+    open-floating true
+}
+
+window-rule {
+    match app-id="nwg-look" title="nwg-look"
+    match app-id="waypaper" title="Waypaper"
+
+    match title=".*choose.*"
+    match title=".*copy.*"
+    match title=".*extract.*"
+    match title=".*file.*"
+    match title=".*move.*"
+    match title=".*open.*"
+    match title=".*preference.*"
+    match title=".*save.*"
+
+    match title=".*Choose.*"
+    match title=".*Copy.*"
+    match title=".*Extract.*"
+    match title=".*File.*"
+    match title=".*Move.*"
+    match title=".*Open.*"
+    match title=".*Preference.*"
+    match title=".*Save.*"
+
+    default-column-width  { proportion 0.7; }
+    default-window-height { proportion 0.8; }
+    open-floating true
+}

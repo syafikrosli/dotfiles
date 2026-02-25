@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+LIB="$HOME/.config/theme-system/lib"
+
+source "$LIB/theme.sh"
+
+toggle_theme
+"$HOME/.config/theme-system/bin/theme-sync"

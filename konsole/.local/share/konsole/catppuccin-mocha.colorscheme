@@ -1,0 +1,90 @@
+[Background]
+Color=30,30,46
+
+[BackgroundFaint]
+Color=24,24,37
+
+[BackgroundIntense]
+Color=49,50,68
+
+# ANSI Black
+[Color0]
+Color=69,71,90
+[Color0Faint]
+Color=88,91,112
+[Color0Intense]
+Color=108,112,134
+
+# ANSI Red
+[Color1]
+Color=243,139,168
+[Color1Faint]
+Color=235,160,172
+[Color1Intense]
+Color=243,139,168
+
+# ANSI Green
+[Color2]
+Color=166,227,161
+[Color2Faint]
+Color=148,196,153
+[Color2Intense]
+Color=166,227,161
+
+# ANSI Yellow
+[Color3]
+Color=249,226,175
+[Color3Faint]
+Color=220,198,145
+[Color3Intense]
+Color=249,226,175
+
+# ANSI Blue
+[Color4]
+Color=137,180,250
+[Color4Faint]
+Color=116,155,230
+[Color4Intense]
+Color=180,190,254
+
+# ANSI Magenta
+[Color5]
+Color=203,166,247
+[Color5Faint]
+Color=193,155,230
+[Color5Intense]
+Color=203,166,247
+
+# ANSI Cyan
+[Color6]
+Color=148,226,213
+[Color6Faint]
+Color=133,203,193
+[Color6Intense]
+Color=148,226,213
+
+# ANSI White
+[Color7]
+Color=205,214,244
+[Color7Faint]
+Color=181,191,226
+[Color7Intense]
+Color=220,224,245
+
+[Foreground]
+Color=205,214,244
+[ForegroundFaint]
+Color=181,191,226
+[ForegroundIntense]
+Color=220,224,245
+
+[General]
+Anchor=0.5,0.5
+Blur=false
+ColorRandomization=false
+Description=Catppuccin Mocha Classic
+FillStyle=Tile
+Opacity=1
+Wallpaper=
+WallpaperFlipType=NoFlip
+WallpaperOpacity=1

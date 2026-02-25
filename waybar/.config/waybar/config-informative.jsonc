@@ -1,0 +1,82 @@
+{
+        "layer": "top",
+        "position": "top",
+        "reload_style_on_change": true,
+
+        "modules-left": [
+                "niri/workspaces"
+        ],
+
+        "modules-center": [
+                "clock"
+        ],
+
+        "modules-right": [
+                "network",
+                "backlight",
+                "wireplumber#sink",
+                "wireplumber#source",
+                "group/tray-expander"
+        ],
+
+        "clock": {
+                "format": "{:%a, %d %b | %H:%M}",
+                "tooltip": true,
+                "tooltip-format": "{:%d-%m-%Y | %A}",
+                "interval": 60
+        },
+
+        "backlight": {
+                "format": "{icon}",
+                "format-icons": ["󰃞","󰃟","󰃠"],
+                "tooltip-format": "Brightness: {percent}%",
+                "scroll-step": 5
+        },
+
+        "network": {
+                "format-wifi": "",
+                "format-ethernet": "",
+                "format-disconnected": "",
+                "tooltip-format-wifi": "SSID: {essid}\nSignal: {signalStrength}%\nIP: {ipaddr}",
+                "tooltip-format-ethernet": "Ethernet\nIP: {ipaddr}\nGW: {gwaddr}",
+                "tooltip-format-disconnected": "Disconnected",
+                "interval": 10
+        },
+
+        "wireplumber#sink": {
+                "node-type": "Audio/Sink",
+                "format": "{icon}",
+                "format-muted": "",
+                "format-icons": ["","",""],
+                "tooltip-format": "{volume}% Output",
+                "scroll-step": 5
+        },
+
+        "wireplumber#source": {
+                "node-type": "Audio/Source",
+                "format": "",
+                "format-muted": "",
+                "tooltip-format": "{volume}% Mic",
+                "scroll-step": 5
+        },
+
+                "group/tray-expander": {
+                "orientation": "horizontal",
+                "drawer": {
+                        "transition-duration": 180,
+                        "transition-left-to-right": true,
+                        "children-class": "tray-group-item"
+                },
+                "modules": ["custom/sep", "tray"]
+        },
+
+        "custom/sep": {
+                "format": "·",
+                "tooltip": false
+        },
+
+        "tray": {
+                "icon-size": 11,
+                "spacing": 4
+        }
+}

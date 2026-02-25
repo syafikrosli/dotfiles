@@ -1,0 +1,137 @@
+/* ============================================== */
+/* Everforest Dark Hard                           */
+/* ============================================== */
+@define-color crust     #1e2326;
+@define-color mantle    #272e33;
+@define-color base      #2e383c;
+
+@define-color text      #d3c6aa;
+@define-color subtext0  #9da9a0;
+@define-color subtext1  #a7b3a8;
+
+@define-color surface0  #374145;
+@define-color surface1  #414b50;
+@define-color surface2  #4c555b;
+
+@define-color mauve     #a7c080;
+@define-color red       #e67e80;
+@define-color yellow    #dbbc7f;
+
+/* ============================================== */
+/* Global                                         */
+/* ============================================== */
+* {
+    min-height: 0;
+    border-radius: 0;
+}
+
+/* ============================================== */
+/* Waybar                                         */
+/* ============================================== */
+window#waybar {
+    background-color: alpha(@mantle, 0.98);
+    color: @text;
+    border-bottom: 1px solid alpha(@surface0, 0.6);
+}
+
+window#waybar * {
+    font-family: 'JetBrainsMonoNL Nerd Font Propo', monospace;
+    font-weight: 500;
+    font-size: 10.5px;
+}
+
+/* ============================================== */
+/* Workspaces                                     */
+/* ============================================== */
+#workspaces button {
+    background-color: alpha(@base, 0.0);
+    color: @subtext0;
+    padding: 4px 6px;
+    transition: background-color 120ms ease, color 120ms ease;
+}
+
+#workspaces button.empty {
+    font-style: italic;
+    color: @surface2;
+}
+
+#workspaces button.focused {
+    background-color: alpha(@mauve, 0.22);
+    color: @mauve;
+}
+
+#workspaces button.urgent {
+    background-color: alpha(@red, 0.7);
+    color: @crust;
+}
+
+#workspaces button:hover:not(.focused):not(.urgent) {
+    background-color: alpha(@surface1, 0.5);
+    color: @text;
+}
+
+/* ============================================== */
+/* Modules                                        */
+/* ============================================== */
+#clock,
+#network,
+#backlight,
+#wireplumber.sink,
+#wireplumber.source,
+#custom-sep,
+#tray {
+    color: @text;
+    padding: 4px 6px;
+}
+
+/* Subtle accent anchor */
+#clock {
+    font-weight: 600;
+    color: @mauve;
+}
+
+/* State-based coloring */
+#network.disconnected {
+    color: @red;
+}
+
+#wireplumber.muted {
+    color: @yellow;
+}
+
+/* Visual separators stay quiet */
+#custom-sep {
+    color: @subtext0;
+}
+
+#tray {
+    min-height: 0;
+}
+
+#tray > .passive {
+    opacity: 0.7;
+}
+
+#tray > .needs-attention {
+    background: alpha(@mauve, 0.2);
+    border-radius: 3px;
+    padding: 2px;
+}
+
+#tray menu {
+    background: alpha(@base, 0.98);
+    border: 1px solid alpha(@mauve, 0.4);
+}
+
+/* ============================================== */
+/* Tooltip                                        */
+/* ============================================== */
+tooltip {
+    font-family: 'JetBrainsMonoNL Nerd Font Propo', monospace;
+    font-weight: 500;
+    font-size: 10.5px;
+    background-color: alpha(@base, 0.98);
+    color: @text;
+    border: 1px solid alpha(@mauve, 0.45);
+    border-radius: 0;
+}

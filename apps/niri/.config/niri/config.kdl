@@ -21,7 +21,7 @@ environment {
     ELECTRON_OZONE_PLATFORM_HINT "wayland"
 
     XCURSOR_THEME "Bibata-Modern-Ice"
-    XCURSOR_SIZE "22"
+    XCURSOR_SIZE "24"
 
     EDITOR "nvim"
     VISUAL "nvim"
@@ -29,12 +29,12 @@ environment {
 
 cursor {
     xcursor-theme "Bibata-Modern-Ice"
-    xcursor-size 22
+    xcursor-size 24
 }
 
 overview {
     zoom 0.6
-    backdrop-color "#272e33"
+    backdrop-color "#282828"
 }
 
 hotkey-overlay {
@@ -103,9 +103,9 @@ layout {
     border {
         on
         width 1
-        active-color "#a7c080"
-        inactive-color "#272e33"
-        urgent-color "#e67e80"
+        active-color "#d79921"
+        inactive-color "#282828"
+        urgent-color "#fb4934"
     }
 
     shadow {
@@ -121,14 +121,14 @@ layout {
         position "top"
         length total-proportion=1.0
         gaps-between-tabs 4
-        active-color "#a7c080"
-        inactive-color "#272e33"
-        urgent-color "#e67e80"
+        active-color "#d79921"
+        inactive-color "#282828"
+        urgent-color "#fb4934"
     }
 
     insert-hint {
         on
-        color "#a7c08080"
+        color "#d7992180"
     }
 }
 
@@ -227,7 +227,7 @@ binds {
 
     Super+Alt+P { spawn-sh "systemctl poweroff"; }
     Super+Alt+R { spawn-sh "systemctl reboot"; }
-    Super+Alt+W { spawn-sh "systemctl --user restart waybar.service"; }
+    Super+Alt+W { spawn-sh "systemctl --user reload-or-restart waybar.service"; }
 
     XF86AudioMute        allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"; }

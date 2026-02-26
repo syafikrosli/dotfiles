@@ -7,17 +7,12 @@ source "$LIB/waybar.sh"
 current="$(get_waybar_mode)"
 
 case "$current" in
-    informative)
-        next="minimal"
-        ;;
-    minimal)
-        next="informative"
-        ;;
-    *)
-        next="$DEFAULT_WAYBAR_MODE"
-        ;;
+    informative) next="minimal" ;;
+    minimal) next="informative" ;;
+    *) next="$DEFAULT_WAYBAR_MODE" ;;
 esac
 
 set_waybar_mode "$next"
 apply_waybar
+
 notify "Waybar mode → $next"

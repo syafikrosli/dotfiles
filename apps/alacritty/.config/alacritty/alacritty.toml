@@ -1,5 +1,5 @@
 [general]
-import = [ "/home/syafik/.config/alacritty/themes/catppuccin_mocha.toml" ]
+import = [ "/home/syafik/.config/alacritty/themes/everforest.toml" ]
 
 [window]
 padding = { x = 3, y = 3}

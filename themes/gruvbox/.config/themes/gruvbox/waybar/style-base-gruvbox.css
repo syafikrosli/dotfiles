@@ -1,0 +1,137 @@
+/* ============================================== */
+/* Gruvbox Dark Palette                           */
+/* ============================================== */
+@define-color crust     #1d2021;
+@define-color mantle    #282828;
+@define-color base      #32302f;
+
+@define-color text      #ebdbb2;
+@define-color subtext0  #d5c4a1;
+@define-color subtext1  #bdae93;
+
+@define-color surface0  #3c3836;
+@define-color surface1  #504945;
+@define-color surface2  #665c54;
+
+@define-color mauve     #d79921;
+@define-color red       #fb4934;
+@define-color yellow    #fabd2f;
+
+/* ============================================== */
+/* Global                                         */
+/* ============================================== */
+* {
+    min-height: 0;
+    border-radius: 0;
+}
+
+/* ============================================== */
+/* Waybar                                         */
+/* ============================================== */
+window#waybar {
+    background-color: alpha(@mantle, 0.95);
+    color: @text;
+    border-bottom: 1px solid alpha(@surface0, 0.65);
+}
+
+window#waybar * {
+    font-family: 'JetBrainsMonoNL Nerd Font Propo', monospace;
+    font-weight: 500;
+    font-size: 10.5px;
+}
+
+/* ============================================== */
+/* Workspaces                                     */
+/* ============================================== */
+#workspaces button {
+    background-color: transparent;
+    color: @subtext0;
+    padding: 4px 6px;
+    transition: background-color 120ms ease, color 120ms ease;
+}
+
+#workspaces button.empty {
+    font-style: italic;
+    color: @surface2;
+}
+
+#workspaces button.focused {
+    background-color: alpha(@mauve, 0.25);
+    color: @mauve;
+}
+
+#workspaces button.urgent {
+    background-color: alpha(@red, 0.75);
+    color: @crust;
+}
+
+#workspaces button:hover:not(.focused):not(.urgent) {
+    background-color: alpha(@surface1, 0.55);
+    color: @text;
+}
+
+/* ============================================== */
+/* Modules                                        */
+/* ============================================== */
+#clock,
+#network,
+#backlight,
+#wireplumber.sink,
+#wireplumber.source,
+#custom-sep,
+#tray {
+    color: @text;
+    padding: 4px 6px;
+}
+
+/* Subtle accent anchor */
+#clock {
+    font-weight: 600;
+    color: @mauve;
+}
+
+/* State-based coloring */
+#network.disconnected {
+    color: @red;
+}
+
+#wireplumber.muted {
+    color: @yellow;
+}
+
+/* Visual separators stay quiet */
+#custom-sep {
+    color: @subtext0;
+}
+
+#tray {
+    min-height: 0;
+}
+
+#tray > .passive {
+    opacity: 0.7;
+}
+
+#tray > .needs-attention {
+    background: alpha(@mauve, 0.22);
+    border-radius: 3px;
+    padding: 2px;
+}
+
+#tray menu {
+    background: alpha(@base, 0.95);
+    border: 1px solid alpha(@mauve, 0.5);
+}
+
+/* ============================================== */
+/* Tooltip                                        */
+/* ============================================== */
+tooltip {
+    font-family: 'JetBrainsMonoNL Nerd Font Propo', monospace;
+    font-weight: 500;
+    font-size: 10.5px;
+    background-color: alpha(@base, 0.98);
+    color: @text;
+    border: 1px solid alpha(@mauve, 0.45);
+    border-radius: 0;
+}

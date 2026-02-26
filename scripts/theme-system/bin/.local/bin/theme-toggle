@@ -2,7 +2,6 @@
 set -Eeuo pipefail
 
 LIB="$HOME/.config/theme-system/lib"
-
 source "$LIB/theme.sh"
 
 toggle_theme

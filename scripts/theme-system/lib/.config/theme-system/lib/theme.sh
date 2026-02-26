@@ -2,23 +2,13 @@
 set -Eeuo pipefail
 
 CORE="$HOME/.config/theme-system/lib/core.sh"
-[[ -f "$CORE" ]] || {
-    echo "Missing core library: $CORE" >&2
-    exit 1
-}
 source "$CORE"
 
 detect_themes() {
     shopt -s nullglob
-    local file name
-
-    for file in "$WAYBAR_DIR"/style-base-*.css; do
-        name="${file##*/}"
-        name="${name#style-base-}"
-        name="${name%.css}"
-        printf '%s\n' "$name"
+    for dir in "$THEME_ROOT"/*; do
+        [[ -d "$dir" ]] && basename "$dir"
     done
-
     shopt -u nullglob
 }
 

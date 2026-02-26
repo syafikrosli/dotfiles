@@ -1,6 +1,12 @@
 # ~/.zshrc
 
 ### --------------------------------------------------
+###  Interactive guard
+### --------------------------------------------------
+
+[[ -o interactive ]] || return
+
+### --------------------------------------------------
 ###  Core shell options
 ### --------------------------------------------------
 
@@ -17,48 +23,64 @@ setopt \
   HIST_IGNORE_SPACE \
   HIST_FIND_NO_DUPS \
   HIST_SAVE_NO_DUPS \
-  HIST_REDUCE_BLANKS
+  HIST_REDUCE_BLANKS \
+  HIST_EXPIRE_DUPS_FIRST \
+  HIST_VERIFY
 
-# Better cd navigation
+# Navigation
 setopt \
   AUTO_CD \
   AUTO_PUSHD \
-  PUSHD_IGNORE_DUPS
+  PUSHD_IGNORE_DUPS \
+  PUSHD_SILENT
+
+# Safety / usability
+setopt \
+  NO_CLOBBER \
+  EXTENDED_GLOB \
+  INTERACTIVE_COMMENTS
 
 ### --------------------------------------------------
 ###  Init system
 ### --------------------------------------------------
 
 autoload -Uz compinit promptinit add-zle-hook-widget
+
+# Rebuild completion cache if older than 24h
 if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
-  compinit -i
+  compinit
 else
   compinit -C
 fi
 
 promptinit
 
-# Prompt
+# Default prompt
 prompt suse
 
 ### --------------------------------------------------
 ###  Completion
 ### --------------------------------------------------
 
+# Fast completion cache
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.cache/zsh
+
+# Behavior
 zstyle ':completion:*' group-name ''
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' squeeze-slashes true
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 ### --------------------------------------------------
-###  Keymap setup
+###  Keymap
 ### --------------------------------------------------
 
-# Use emacs-style keys unless you enjoy suffering
 bindkey -e
 
 typeset -gA key
 
-# Base keys
 key=(
   Home        "${terminfo[khome]}"
   End         "${terminfo[kend]}"
@@ -76,44 +98,43 @@ key=(
   Ctrl-Right  "${terminfo[kRIT5]}"
 )
 
-# Helper: bind if key exists
 bind_if() {
   local k="$1" fn="$2"
   [[ -n "$k" ]] && bindkey -- "$k" "$fn"
 }
 
 # Navigation
-bind_if "$key[Home]"  beginning-of-line
-bind_if "$key[End]"   end-of-line
-bind_if "$key[Left]"  backward-char
+bind_if "$key[Home]" beginning-of-line
+bind_if "$key[End]" end-of-line
+bind_if "$key[Left]" backward-char
 bind_if "$key[Right]" forward-char
 
 # Editing
 bind_if "$key[Backspace]" backward-delete-char
-bind_if "$key[Delete]"    delete-char
-bind_if "$key[Insert]"    overwrite-mode
+bind_if "$key[Delete]" delete-char
+bind_if "$key[Insert]" overwrite-mode
 
-# History movement (predictable search)
+# History search
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 
-bind_if "$key[Up]"   up-line-or-beginning-search
+bind_if "$key[Up]" up-line-or-beginning-search
 bind_if "$key[Down]" down-line-or-beginning-search
 
-# Buffer
-bind_if "$key[PageUp]"   beginning-of-buffer-or-history
+# Buffer navigation
+bind_if "$key[PageUp]" beginning-of-buffer-or-history
 bind_if "$key[PageDown]" end-of-buffer-or-history
 
 # Completion
 bind_if "$key[Shift-Tab]" reverse-menu-complete
 
-# Word jumps
-bind_if "$key[Ctrl-Left]"  backward-word
+# Word movement
+bind_if "$key[Ctrl-Left]" backward-word
 bind_if "$key[Ctrl-Right]" forward-word
 
 ### --------------------------------------------------
-###  ZLE terminal mode fix
+###  Terminal mode fix
 ### --------------------------------------------------
 
 if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
@@ -124,13 +145,14 @@ if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
 fi
 
 ### --------------------------------------------------
-### Alias
+###  Alias
 ### --------------------------------------------------
 
-# ---- Smart aliases with fallback ----
+# Command helper
+has() { command -v "$1" >/dev/null 2>&1; }
 
-# ls → eza if available, otherwise ls
-if command -v eza >/dev/null 2>&1; then
+# ls
+if has eza; then
   alias ls='eza --group-directories-first --icons --git'
 else
   if ls --color=auto >/dev/null 2>&1; then
@@ -140,17 +162,16 @@ else
   fi
 fi
 
-# cat → bat if available, otherwise cat
-if command -v bat >/dev/null 2>&1; then
+# cat
+if has bat; then
   alias cat='bat'
-elif command -v batcat >/dev/null 2>&1; then
-  # Debian/Ubuntu like to rename it because reasons
+elif has batcat; then
   alias cat='batcat'
 fi
 
 alias grep='grep --color=auto'
 
-# Kitty clear fix
+# Kitty fix
 [[ $TERM == xterm-kitty ]] && alias clear='printf "\e[H\e[3J"'
 
 ### --------------------------------------------------
@@ -162,5 +183,36 @@ for f in \
   /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
   /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 do
-  [[ -f $f ]] && source $f && break
+  [[ -r $f ]] && source $f && break
 done
+
+### --------------------------------------------------
+###  Modular extensions (infrastructure layer)
+### --------------------------------------------------
+
+typeset -U path PATH
+
+path_prepend() {
+  [[ -d "$1" ]] || return
+  path=("$1" $path)
+}
+
+path_append() {
+  [[ -d "$1" ]] || return
+  path+=("$1")
+}
+
+ZSH_CONFIG_DIR="$HOME/.config/zsh/modules"
+
+# Load optional modules automatically
+if [[ -d "$ZSH_CONFIG_DIR" ]]; then
+  for f in "$ZSH_CONFIG_DIR"/*.zsh(NOn); do
+    source "$f"
+  done
+fi
+
+### --------------------------------------------------
+###  Machine-specific overrides
+### --------------------------------------------------
+
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

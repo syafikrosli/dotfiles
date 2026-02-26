@@ -26,7 +26,12 @@ read_state() {
 }
 
 write_state() {
-    printf '%s\n' "$2" > "$1"
+    local file="$1"
+    local value="$2"
+    local tmp="${file}.tmp"
+
+    printf '%s\n' "$value" > "$tmp"
+    mv "$tmp" "$file"
 }
 
 safe_link() {

@@ -7,19 +7,45 @@ source "$BASE/core.sh"
 source "$BASE/theme.sh"
 
 get_waybar_mode() {
-    read_state "$WAYBAR_MODE_FILE" "$DEFAULT_WAYBAR_MODE"
+    local mode
+    mode="$(read_state "$WAYBAR_MODE_FILE" "$DEFAULT_WAYBAR_MODE")"
+
+    if waybar_mode_exists "$mode"; then
+        echo "$mode"
+        return
+    fi
+
+    # fallback to first detected mode
+    local first
+    first="$(detect_waybar_modes | sort -V | head -n1)"
+
+    if [[ -n "$first" ]]; then
+        echo "$first"
+    else
+        echo "$DEFAULT_WAYBAR_MODE"
+    fi
+}
+
+detect_waybar_modes() {
+    shopt -s nullglob
+    for file in "$WAYBAR_DIR"/config-*.jsonc; do
+        basename "$file" | sed -E 's/config-(.*)\.jsonc/\1/'
+    done
+    shopt -u nullglob
+}
+
+waybar_mode_exists() {
+    local m="$1"
+    detect_waybar_modes | grep -qx "$m"
 }
 
 set_waybar_mode() {
     local mode="$1"
 
-    case "$mode" in
-        informative|minimal) ;;
-        *)
-            notify "Invalid mode: $mode"
-            exit 1
-            ;;
-    esac
+    if ! waybar_mode_exists "$mode"; then
+        notify "Invalid mode: $mode"
+        exit 1
+    fi
 
     write_state "$WAYBAR_MODE_FILE" "$mode"
 }

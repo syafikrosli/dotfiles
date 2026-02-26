@@ -9,29 +9,30 @@ source "$LIB/waybar.sh"
 theme="$(get_theme)"
 theme_dir="$THEME_ROOT/$theme"
 
-# GTK
-safe_link \
-"$theme_dir/gtk-3.0/gtk-$theme.css" \
-"$HOME/.config/gtk-3.0/gtk.css"
+# =========================================================
+# Apply theme files automatically
+# Mirrors: themes/<theme>/.config/... → ~/.config/...
+# =========================================================
 
-safe_link \
-"$theme_dir/gtk-4.0/gtk-$theme.css" \
-"$HOME/.config/gtk-4.0/gtk.css"
+while IFS= read -r -d '' file; do
+    relative="${file#$theme_dir/}"
 
-# swaync
-safe_link \
-"$theme_dir/swaync/style-$theme.css" \
-"$HOME/.config/swaync/style.css"
+    # Waybar is handled separately
+    case "$relative" in
+        .config/waybar/*) continue ;;
+        */state/*) continue ;;
+    esac
 
-# hyprlock
-safe_link \
-"$theme_dir/hypr/hyprlock-$theme.conf" \
-"$HOME/.config/hypr/hyprlock.conf"
+    target="$HOME/$relative"
 
-# fuzzel
-safe_link \
-"$theme_dir/fuzzel/fuzzel-$theme.ini" \
-"$HOME/.config/fuzzel/fuzzel.ini"
+    mkdir -p "$(dirname "$target")"
+    safe_link "$file" "$target"
+
+done < <(find "$theme_dir" -type f -print0)
+
+# =========================================================
+# Apply Waybar (theme + mode system)
+# =========================================================
 
 apply_waybar
 

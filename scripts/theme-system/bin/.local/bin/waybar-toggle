@@ -4,13 +4,23 @@ set -Eeuo pipefail
 LIB="$HOME/.config/theme-system/lib"
 source "$LIB/waybar.sh"
 
+mapfile -t modes < <(detect_waybar_modes | sort -V)
+
+if [[ ${#modes[@]} -eq 0 ]]; then
+    notify "No Waybar modes found"
+    exit 1
+fi
+
 current="$(get_waybar_mode)"
 
-case "$current" in
-    informative) next="minimal" ;;
-    minimal) next="informative" ;;
-    *) next="$DEFAULT_WAYBAR_MODE" ;;
-esac
+next="$DEFAULT_WAYBAR_MODE"
+
+for i in "${!modes[@]}"; do
+    if [[ "${modes[$i]}" == "$current" ]]; then
+        next="${modes[$(( (i+1) % ${#modes[@]} ))]}"
+        break
+    fi
+done
 
 set_waybar_mode "$next"
 apply_waybar

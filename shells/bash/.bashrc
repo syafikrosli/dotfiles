@@ -14,6 +14,8 @@ set -o pipefail
 ### --------------------------------------------------
 
 HISTFILE="${HOME}/.bash_history"
+export HISTFILE
+
 HISTSIZE=5000
 HISTFILESIZE=10000
 HISTCONTROL=ignoreboth:erasedups
@@ -21,10 +23,9 @@ HISTIGNORE='ls:cd:pwd:exit:clear'
 HISTTIMEFORMAT='%F %T '
 
 shopt -s histappend cmdhist autocd cdspell lithist
-PROMPT_COMMAND=(
-  "history -a"
-  "history -n"
-)
+PROMPT_COMMAND=()
+PROMPT_COMMAND+=("history -a")
+PROMPT_COMMAND+=("history -n")
 
 ### --------------------------------------------------
 ###  Shell behavior
@@ -45,10 +46,11 @@ stty -ixon 2>/dev/null
 
 # PATH: prepend ~/.local/bin once
 path_prepend() {
-  local p="$1"
+  local dir="$1"
+  [[ -d "$dir" ]] || return
   case ":$PATH:" in
-    *":$p:"*) ;;
-    *) PATH="$p:$PATH" ;;
+    *":$dir:"*) ;;
+    *) PATH="$dir:$PATH" ;;
   esac
 }
 
@@ -94,12 +96,13 @@ alias grep='grep --color=auto'
 ### --------------------------------------------------
 
 # Show exit code if non-zero
-__prompt_exit() {
-  local s=$1
-  [[ $s != 0 ]] && printf " (%s)" "$s"
+__update_prompt() {
+  local exit_code=$?
+  local status=""
+  [[ $exit_code != 0 ]] && status=" ($exit_code)"
+  PS1="[\u@\h \W]${status}\$ "
 }
-
-PS1='[\u@\h \W]$(__prompt_exit $?)\$ '
+PROMPT_COMMAND+=("__update_prompt")
 
 # Source bash completion (if available)
 if [[ -r /usr/share/bash-completion/bash_completion ]]; then

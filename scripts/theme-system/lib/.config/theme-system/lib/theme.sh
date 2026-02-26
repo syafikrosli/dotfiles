@@ -8,7 +8,7 @@ detect_themes() {
     shopt -s nullglob
     for dir in "$THEME_ROOT"/*; do
         [[ -d "$dir" ]] && basename "$dir"
-    done
+    done | sort -V
     shopt -u nullglob
 }
 
@@ -18,7 +18,15 @@ theme_exists() {
 }
 
 get_theme() {
-    read_state "$THEME_FILE" "$DEFAULT_THEME"
+    local theme
+    theme="$(read_state "$THEME_FILE" "$DEFAULT_THEME")"
+
+    if theme_exists "$theme"; then
+        echo "$theme"
+    else
+        write_state "$THEME_FILE" "$DEFAULT_THEME"
+        echo "$DEFAULT_THEME"
+    fi
 }
 
 set_theme() {
@@ -33,7 +41,7 @@ set_theme() {
 }
 
 toggle_theme() {
-    mapfile -t themes < <(detect_themes)
+    mapfile -t themes < <(detect_themes | sort -V)
     local current next
 
     current="$(get_theme)"

@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-set -Eeuo pipefail
-
-STATE="$HOME/.config/theme-system/state"
-
-echo "Theme  : $(cat $STATE/theme)"
-echo "Waybar : $(cat $STATE/waybar-mode)"

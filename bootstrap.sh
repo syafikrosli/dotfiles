@@ -41,3 +41,5 @@ stow -R -t "$HOME" */
 
 echo
 echo "Bootstrap complete."
+echo "You can safely run this script multiple times."
+echo "Existing symlinks will be updated."

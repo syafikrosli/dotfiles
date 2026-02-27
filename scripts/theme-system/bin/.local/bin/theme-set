@@ -1,10 +1,19 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
+source "$HOME/.config/theme-system/lib/theme.sh"
+source "$HOME/.config/theme-system/lib/waybar.sh"
+source "$HOME/.config/theme-system/lib/core.sh"
 
-LIB="$HOME/.config/theme-system/lib"
-source "$LIB/theme.sh"
+theme="$1"
 
-[[ $# -eq 1 ]] || exit 1
+if [ -z "$theme" ]; then
+    echo "Usage: theme-set <theme>"
+    exit 1
+fi
 
-set_theme "$1"
-"$HOME/.config/theme-system/bin/theme-sync"
+if ! set_theme "$theme"; then
+    echo "Theme was NOT changed."
+    exit 1
+fi
+
+build_waybar_css
+reload_services

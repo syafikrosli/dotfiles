@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
+source "$HOME/.config/theme-system/lib/waybar.sh"
+source "$HOME/.config/theme-system/lib/core.sh"
 
-LIB="$HOME/.config/theme-system/lib"
-source "$LIB/waybar.sh"
+mode="$1"
 
-[[ $# -eq 1 ]] || exit 1
+if [ -z "$mode" ]; then
+    echo "Usage: waybar-mode <informative|minimal>"
+    exit 1
+fi
 
-set_waybar_mode "$1"
-apply_waybar
+ln -sfn "$WAYBAR_DIR/config-$mode.jsonc" \
+    "$WAYBAR_DIR/config.jsonc"
+
+echo "$mode" > "$WAYBAR_MODE_STATE"
+
+build_waybar_css
+reload_services

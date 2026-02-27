@@ -1,58 +1,61 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
+source "$HOME/.config/theme-system/lib/core.sh"
 
-CORE="$HOME/.config/theme-system/lib/core.sh"
-source "$CORE"
+validate_theme() {
+    local theme="$1"
 
-detect_themes() {
-    shopt -s nullglob
-    for dir in "$THEME_ROOT"/*; do
-        [[ -d "$dir" ]] && basename "$dir"
-    done | sort -V
-    shopt -u nullglob
-}
+    local required=(
+        "$THEME_DIR/$theme/fuzzel/fuzzel-$theme.ini"
+        "$THEME_DIR/$theme/gtk-3.0/gtk-$theme.css"
+        "$THEME_DIR/$theme/gtk-4.0/gtk-$theme.css"
+        "$THEME_DIR/$theme/hypr/hyprlock-$theme.conf"
+        "$THEME_DIR/$theme/swaync/style-$theme.css"
+        "$THEME_DIR/$theme/waybar/style-base-$theme.css"
+    )
 
-theme_exists() {
-    local t="$1"
-    detect_themes | grep -qx "$t"
-}
+    local missing=0
 
-get_theme() {
-    local theme
-    theme="$(read_state "$THEME_FILE" "$DEFAULT_THEME")"
+    for file in "${required[@]}"; do
+        if [ ! -f "$file" ]; then
+            echo "Missing theme file:"
+            echo "$file"
+            missing=1
+        fi
+    done
 
-    if theme_exists "$theme"; then
-        echo "$theme"
-    else
-        write_state "$THEME_FILE" "$DEFAULT_THEME"
-        echo "$DEFAULT_THEME"
+    if [ "$missing" -ne 0 ]; then
+        echo
+        echo "Theme validation failed."
+        return 1
     fi
+
+    return 0
 }
 
 set_theme() {
     local theme="$1"
 
-    if ! theme_exists "$theme"; then
-        notify "Theme not found: $theme"
-        exit 1
-    fi
+    validate_theme "$theme" || return 1
 
-    write_state "$THEME_FILE" "$theme"
-}
+    ln -sfn "$THEME_DIR/$theme/fuzzel/fuzzel-$theme.ini" \
+        "$HOME/.config/fuzzel/fuzzel.ini"
 
-toggle_theme() {
-    mapfile -t themes < <(detect_themes | sort -V)
-    local current next
+    ln -sfn "$THEME_DIR/$theme/gtk-3.0/gtk-$theme.css" \
+        "$HOME/.config/gtk-3.0/gtk.css"
 
-    current="$(get_theme)"
+    ln -sfn "$THEME_DIR/$theme/gtk-4.0/gtk-$theme.css" \
+        "$HOME/.config/gtk-4.0/gtk.css"
 
-    for i in "${!themes[@]}"; do
-        if [[ "${themes[$i]}" == "$current" ]]; then
-            next="${themes[$(( (i+1) % ${#themes[@]} ))]}"
-            set_theme "$next"
-            return
-        fi
-    done
+    ln -sfn "$THEME_DIR/$theme/hypr/hyprlock-$theme.conf" \
+        "$HOME/.config/hypr/hyprlock.conf"
 
-    set_theme "$DEFAULT_THEME"
+    ln -sfn "$THEME_DIR/$theme/swaync/style-$theme.css" \
+        "$HOME/.config/swaync/style.css"
+
+    ln -sfn "$THEME_DIR/$theme/waybar/style-base-$theme.css" \
+        "$WAYBAR_DIR/style-base.css"
+
+    echo "$theme" > "$THEME_STATE"
+
+    echo "Theme applied: $theme"
 }

@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
 
-LIB="$HOME/.config/theme-system/lib"
-source "$LIB/theme.sh"
-source "$LIB/waybar.sh"
+STATE="$HOME/.config/theme-system/state"
 
-echo "Theme: $(get_theme)"
-echo "Waybar mode: $(get_waybar_mode)"
-echo
-echo "Available themes:"
-detect_themes
+echo "Theme  : $(cat $STATE/theme)"
+echo "Waybar : $(cat $STATE/waybar-mode)"

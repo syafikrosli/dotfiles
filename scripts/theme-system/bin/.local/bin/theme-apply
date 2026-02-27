@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -Eeuo pipefail
+
 source "$HOME/.config/theme-system/lib/core.sh"
 source "$HOME/.config/theme-system/lib/theme.sh"
 source "$HOME/.config/theme-system/lib/waybar.sh"

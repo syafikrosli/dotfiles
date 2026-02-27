@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+source "$HOME/.config/theme-system/lib/core.sh"
+source "$HOME/.config/theme-system/lib/waybar.sh"
+
+current=$(cat "$WAYBAR_MODE_STATE" 2>/dev/null)
+
+mapfile -t modes < <(
+    for f in "$WAYBAR_DIR"/config-*.jsonc; do
+        basename "$f" | sed 's/config-\(.*\)\.jsonc/\1/'
+    done | sort
+)
+
+if [ ${#modes[@]} -eq 0 ]; then
+    echo "No waybar modes found."
+    exit 1
+fi
+
+next=""
+
+for i in "${!modes[@]}"; do
+    if [ "${modes[$i]}" = "$current" ]; then
+        next="${modes[$(( (i + 1) % ${#modes[@]} ))]}"
+        break
+    fi
+done
+
+[ -z "$next" ] && next="${modes[0]}"
+
+set_waybar_mode "$next"
+
+if pgrep -x waybar >/dev/null; then
+    pkill -SIGUSR2 waybar
+else
+    systemctl --user start waybar.service
+fi
+
+echo "Waybar mode: $next"

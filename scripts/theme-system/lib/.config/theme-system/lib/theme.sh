@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 source "$HOME/.config/theme-system/lib/core.sh"
 
 validate_theme() {

@@ -56,16 +56,13 @@ dotfiles
 
 Application configurations deployed using **GNU Stow**.
 
-Current apps included:
+Current config apps included:
 
 ```
-alacritty
 hypr (hypridle)
-micro
 niri
 swaync
 waybar
-xdg-desktop-portal (niri portals)
 ```
 
 Waybar layouts are stored as modes:

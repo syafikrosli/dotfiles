@@ -46,6 +46,9 @@ setopt \
 ###  Init system
 ### --------------------------------------------------
 
+# Ensure PATH is unique
+typeset -U path PATH
+
 autoload -Uz compinit promptinit add-zle-hook-widget
 
 # Rebuild completion cache if older than 24h
@@ -58,7 +61,7 @@ fi
 promptinit
 
 # Default prompt
-prompt suse
+prompt suse 2>/dev/null
 
 
 ### --------------------------------------------------
@@ -197,8 +200,6 @@ done
 ### --------------------------------------------------
 ###  Modular extensions (infrastructure layer)
 ### --------------------------------------------------
-
-typeset -U path PATH
 
 path_prepend() {
   [[ -d "$1" ]] || return

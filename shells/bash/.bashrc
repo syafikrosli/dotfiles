@@ -37,7 +37,7 @@ PROMPT_COMMAND+=("history -n")
 shopt -s checkwinsize
 
 # Better globbing
-shopt -s globstar dotglob
+shopt -s globstar dotglob nullglob nocaseglob
 
 # Prevent Ctrl-S terminal freeze
 stty -ixon 2>/dev/null
@@ -57,7 +57,7 @@ path_prepend() {
   esac
 }
 
-[[ -d "$HOME/.local/bin" ]] && path_prepend "$HOME/.local/bin"
+path_prepend "$HOME/.local/bin"
 export PATH
 
 export EDITOR="nvim"
@@ -102,7 +102,7 @@ alias grep='grep --color=auto'
 
 # Show exit code if non-zero
 __update_prompt() {
-  local exit_code=$?
+  local exit_code="$?"
   local status=""
   [[ $exit_code != 0 ]] && status=" ($exit_code)"
   PS1="[\u@\h \W]${status}\$ "

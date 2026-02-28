@@ -22,9 +22,11 @@ Primary environment:
 
 # Quick Start
 
-git clone <repo>
+```
+git clone https://github.com/syafikrosli/dotfiles.git
 cd dotfiles
 ./bootstrap.sh
+```
 
 ---
 

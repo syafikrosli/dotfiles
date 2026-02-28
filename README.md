@@ -147,31 +147,23 @@ catppuccin mocha
 
 # Installation
 
-## Clone repository
-
-```
-git clone https://github.com/your-username/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-```
-
----
-
 ## Run bootstrap
 
-Recommended method:
-
 ```
-bash bootstrap.sh
+./bootstrap.sh
 ```
 
-Bootstrap will deploy all configs using GNU Stow.
+What bootstrap does
 
-* Install application configs
-* Install shell configs
-* Install scripts
-* Install themes
+Bootstrap performs the initial setup for the environment.
+* Deploys dotfiles using `stow`
+* Initializes the theme system (`~/.config/themes/current`)
+* Creates required state directories
+* Sets a default Waybar mode
+* Generates Waybar `style.css`
+* Links the active Waybar `config.jsonc`
 
-Bootstrap only performs **stow deployment**.
+Run this once after cloning the repository or when setting up on a new system.
 
 ---
 

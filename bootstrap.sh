@@ -4,7 +4,6 @@ set -euo pipefail
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET="$HOME"
 
-# ---- options ----
 RESTOW=false
 VERBOSE=false
 
@@ -15,21 +14,19 @@ for arg in "${@:-}"; do
   esac
 done
 
-# ---- logging ----
 log() { printf "%s\n" "$*"; }
 info() { printf "• %s\n" "$*"; }
 
-# ---- dependency check ----
 require() {
-  if ! command -v "$1" >/dev/null 2>&1; then
+  command -v "$1" >/dev/null 2>&1 || {
     echo "Missing dependency: $1"
     exit 1
-  fi
+  }
 }
 
 require stow
 
-STOW_FLAGS=()
+STOW_FLAGS=(-t "$TARGET" --adopt)
 $RESTOW && STOW_FLAGS+=("-R")
 $VERBOSE && STOW_FLAGS+=("-v")
 
@@ -38,20 +35,14 @@ cd "$DOTFILES_DIR"
 info "Dotfiles directory: $DOTFILES_DIR"
 info "Target directory: $TARGET"
 
-# ---- stow packages ----
 stow_group() {
   local group="$1"
-
   [ -d "$group" ] || return
 
   for pkg in "$group"/*; do
     [ -d "$pkg" ] || continue
-
-    local name
-    name="$(basename "$pkg")"
-
-    info "Stowing $group/$name"
-    stow "${STOW_FLAGS[@]}" -t "$TARGET" "$pkg"
+    info "Stowing $pkg"
+    stow "${STOW_FLAGS[@]}" "$pkg"
   done
 }
 
@@ -60,25 +51,54 @@ stow_group shells
 stow_group scripts
 stow_group themes
 
-# ---- theme system bootstrap ----
-info "Preparing theme system"
-
+# ---- required directories ----
+mkdir -p "$HOME/.local/bin"
 mkdir -p "$HOME/.config/theme-system/state"
 
-if [ ! -L "$HOME/.config/themes/current" ]; then
-  info "Setting default theme → catppuccin/mocha"
-  ln -s \
-    "$HOME/.config/themes/catppuccin/mocha" \
-    "$HOME/.config/themes/current"
+# ---- theme initialization ----
+THEMES_DIR="$HOME/.config/themes"
+CURRENT_THEME_LINK="$THEMES_DIR/current"
+
+if [ ! -L "$CURRENT_THEME_LINK" ]; then
+  info "Initializing theme → catppuccin/mocha"
+  ln -sfn \
+    "$THEMES_DIR/catppuccin/mocha" \
+    "$CURRENT_THEME_LINK"
 fi
 
-# ---- ensure required dirs exist ----
-mkdir -p "$HOME/.local/bin"
+# ---- waybar initialization ----
+WAYBAR_DIR="$HOME/.config/waybar"
+MODE_DIR="$WAYBAR_DIR/modes"
+STATE_MODE="$HOME/.config/theme-system/state/waybar-mode"
 
-# ---- summary ----
+if [ ! -d "$MODE_DIR" ]; then
+  echo "Waybar modes not installed correctly"
+  exit 1
+fi
+
+if [ ! -f "$STATE_MODE" ]; then
+  if [ -d "$MODE_DIR/informative" ]; then
+    echo "informative" > "$STATE_MODE"
+  else
+    ls -1 "$MODE_DIR" | head -n1 > "$STATE_MODE"
+  fi
+fi
+
+MODE="$(cat "$STATE_MODE")"
+
+STYLE_BASE="$WAYBAR_DIR/style-base.css"
+MODE_STYLE="$MODE_DIR/$MODE/style.css"
+STYLE_OUT="$WAYBAR_DIR/style.css"
+
+if [ -f "$STYLE_BASE" ] && [ -f "$MODE_STYLE" ]; then
+  info "Composing Waybar style"
+  cat "$STYLE_BASE" "$MODE_STYLE" > "$STYLE_OUT"
+fi
+
+info "Activating Waybar mode → $MODE"
+ln -sfn "$MODE_DIR/$MODE/config.jsonc" "$WAYBAR_DIR/config.jsonc"
+
 log
 log "Bootstrap complete."
 log
-log "Optional:"
-log "  ./bootstrap.sh --restow   # rebuild symlinks"
-log "  ./bootstrap.sh --verbose  # debug stow output"
+log "System ready."

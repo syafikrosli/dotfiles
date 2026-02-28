@@ -6,11 +6,13 @@ TARGET="$HOME"
 
 RESTOW=false
 VERBOSE=false
+ADOPT=false
 
 for arg in "${@:-}"; do
   case "$arg" in
     --restow|-R) RESTOW=true ;;
     --verbose|-v) VERBOSE=true ;;
+    --adopt|-a) ADOPT=true ;;
   esac
 done
 
@@ -26,7 +28,8 @@ require() {
 
 require stow
 
-STOW_FLAGS=(-t "$TARGET" --adopt)
+STOW_FLAGS=(-t "$TARGET")
+$ADOPT && STOW_FLAGS+=("--adopt")
 $RESTOW && STOW_FLAGS+=("-R")
 $VERBOSE && STOW_FLAGS+=("-v")
 
@@ -39,10 +42,10 @@ stow_group() {
   local group="$1"
   [ -d "$group" ] || return
 
-  for pkg in "$group"/*; do
-    [ -d "$pkg" ] || continue
-    info "Stowing $pkg"
-    stow "${STOW_FLAGS[@]}" "$pkg"
+  for pkg in "$group"/*/; do
+    pkg_name="$(basename "$pkg")"
+    info "Stowing $group/$pkg_name"
+    stow "${STOW_FLAGS[@]}" --dir="$DOTFILES_DIR/$group" "$pkg_name"
   done
 }
 

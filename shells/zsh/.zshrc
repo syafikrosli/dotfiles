@@ -6,6 +6,7 @@
 
 [[ -o interactive ]] || return
 
+
 ### --------------------------------------------------
 ###  Core shell options
 ### --------------------------------------------------
@@ -40,6 +41,7 @@ setopt \
   EXTENDED_GLOB \
   INTERACTIVE_COMMENTS
 
+
 ### --------------------------------------------------
 ###  Init system
 ### --------------------------------------------------
@@ -58,6 +60,7 @@ promptinit
 # Default prompt
 prompt suse
 
+
 ### --------------------------------------------------
 ###  Completion
 ### --------------------------------------------------
@@ -72,6 +75,7 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' squeeze-slashes true
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
 
 ### --------------------------------------------------
 ###  Keymap
@@ -133,6 +137,7 @@ bind_if "$key[Shift-Tab]" reverse-menu-complete
 bind_if "$key[Ctrl-Left]" backward-word
 bind_if "$key[Ctrl-Right]" forward-word
 
+
 ### --------------------------------------------------
 ###  Terminal mode fix
 ### --------------------------------------------------
@@ -143,6 +148,7 @@ if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
   zle -N zle-line-init
   zle -N zle-line-finish
 fi
+
 
 ### --------------------------------------------------
 ###  Alias
@@ -174,6 +180,7 @@ alias grep='grep --color=auto'
 # Kitty fix
 [[ $TERM == xterm-kitty ]] && alias clear='printf "\e[H\e[3J"'
 
+
 ### --------------------------------------------------
 ###  Plugins
 ### --------------------------------------------------
@@ -185,6 +192,7 @@ for f in \
 do
   [[ -r $f ]] && source $f && break
 done
+
 
 ### --------------------------------------------------
 ###  Modular extensions (infrastructure layer)
@@ -210,6 +218,7 @@ if [[ -d "$ZSH_CONFIG_DIR" ]]; then
     source "$f"
   done
 fi
+
 
 ### --------------------------------------------------
 ###  Machine-specific overrides

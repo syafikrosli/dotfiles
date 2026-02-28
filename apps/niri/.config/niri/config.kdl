@@ -1,6 +1,7 @@
-// ===================================================
+// ========================================================
 // Miscellaneous
-// ===================================================
+// ========================================================
+
 spawn-sh-at-startup "cliphist wipe"
 spawn-sh-at-startup "waypaper --restore"
 spawn-sh-at-startup "wl-paste --type text --watch cliphist store"
@@ -34,16 +35,18 @@ cursor {
 
 overview {
     zoom 0.6
-    backdrop-color "#282828"
+    backdrop-color "#272e33"
 }
 
 hotkey-overlay {
     skip-at-startup
 }
 
-// ===================================================
+
+// ========================================================
 // Input
-// ===================================================
+// ========================================================
+
 input {
     keyboard {
         xkb {
@@ -61,9 +64,11 @@ input {
     }
 }
 
-// ===================================================
+
+// ========================================================
 // Outputs
-// ===================================================
+// ========================================================
+
 output "eDP-1" {
     mode "1366x768@59.973"
     scale 1
@@ -74,9 +79,11 @@ output "eDP-1" {
     }
 }
 
-// ===================================================
+
+// ========================================================
 // Layout
-// ===================================================
+// ========================================================
+
 layout {
     gaps 4
     center-focused-column "always"
@@ -103,9 +110,9 @@ layout {
     border {
         on
         width 1
-        active-color "#d79921"
-        inactive-color "#282828"
-        urgent-color "#fb4934"
+        active-color "#a7c080"
+        inactive-color "#272e33"
+        urgent-color "#e67e80"
     }
 
     shadow {
@@ -121,20 +128,22 @@ layout {
         position "top"
         length total-proportion=1.0
         gaps-between-tabs 4
-        active-color "#d79921"
-        inactive-color "#282828"
-        urgent-color "#fb4934"
+        active-color "#a7c080"
+        inactive-color "#272e33"
+        urgent-color "#e67e80"
     }
 
     insert-hint {
         on
-        color "#d7992180"
+        color "#a7c08080"
     }
 }
 
-// ===================================================
+
+// ========================================================
 // Animations
-// ===================================================
+// ========================================================
+
 animations {
     on
 
@@ -186,18 +195,19 @@ animations {
     }
 }
 
-// ===================================================
+
+// ========================================================
 // Key bindings
-// ===================================================
+// ========================================================
+
 binds {
     Super+Return { spawn "kitty"; }
     Super+D { spawn "fuzzel"; }
-    Super+E { spawn "thunar"; }
+    Super+E { spawn "pcmanfm-qt"; }
     Super+Alt+L { spawn-sh "loginctl lock-session $XDG_SESSION_ID"; }
     Super+N { spawn-sh "swaync-client -t"; }
     Super+V { spawn-sh "cliphist list | fuzzel --dmenu --with-nth 2 | cliphist decode | wl-copy"; }
-    Super+Alt+Shift+W { spawn-sh "~/.config/theme-system/bin/waybar-toggle"; }
-    Super+Alt+Shift+T { spawn-sh "~/.config/theme-system/bin/theme-toggle"; }
+    Super+Shift+Alt+W { spawn-sh "~/.config/theme-system/bin/waybar-toggle"; }
 
     Super+BracketLeft  { consume-or-expel-window-left; }
     Super+BracketRight { consume-or-expel-window-right; }
@@ -242,8 +252,8 @@ binds {
     XF86MonBrightnessDown allow-when-locked=true { spawn-sh "brightnessctl --class=backlight set 5%-"; }
     XF86MonBrightnessUp   allow-when-locked=true { spawn-sh "brightnessctl --class=backlight set +5%"; }
 
-    Super+J { focus-window-up; }
-    Super+K { focus-window-down; }
+    Super+J { focus-window-or-workspace-up; }
+    Super+K { focus-window-or-workspace-down; }
     Super+H { focus-column-left; }
     Super+L { focus-column-right; }
 
@@ -252,11 +262,11 @@ binds {
     Super+Shift+H { move-column-left; }
     Super+Shift+L { move-column-right; }
 
-    Super+Page_Up   { focus-workspace-up; }
-    Super+Page_Down { focus-workspace-down; }
+    Super+WheelScrollUp   cooldown-ms=150 { focus-workspace-up; }
+    Super+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
 
-    Super+Ctrl+Page_Up   { move-column-to-workspace-up; }
-    Super+Ctrl+Page_Down { move-column-to-workspace-down; }
+    Super+Ctrl+J { move-column-to-workspace-up; }
+    Super+Ctrl+K { move-column-to-workspace-down; }
 
     Super+1 { focus-workspace 1; }
     Super+2 { focus-workspace 2; }
@@ -283,9 +293,11 @@ binds {
     Super+Shift+E { quit skip-confirmation=true; }
 }
 
-// ===================================================
+
+// ========================================================
 // Window rules
-// ===================================================
+// ========================================================
+
 window-rule {
     match app-id=r#"^org\.wezfurlong\.wezterm$"#
     match app-id="code.*"

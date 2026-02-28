@@ -9,6 +9,7 @@
 set -o noclobber
 set -o pipefail
 
+
 ### --------------------------------------------------
 ###  History
 ### --------------------------------------------------
@@ -27,6 +28,7 @@ PROMPT_COMMAND=()
 PROMPT_COMMAND+=("history -a")
 PROMPT_COMMAND+=("history -n")
 
+
 ### --------------------------------------------------
 ###  Shell behavior
 ### --------------------------------------------------
@@ -39,6 +41,7 @@ shopt -s globstar dotglob
 
 # Prevent Ctrl-S terminal freeze
 stty -ixon 2>/dev/null
+
 
 ### --------------------------------------------------
 ###  Environment
@@ -60,6 +63,7 @@ export PATH
 export EDITOR="nvim"
 export VISUAL="nvim"
 export LESS='-R -F -X'
+
 
 ### --------------------------------------------------
 ###  Aliases
@@ -90,6 +94,7 @@ alias grep='grep --color=auto'
 
 # Kitty clear fix
 [[ $TERM == xterm-kitty ]] && alias clear='printf "\e[H\e[3J"'
+
 
 ### --------------------------------------------------
 ###  Prompt

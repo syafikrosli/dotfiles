@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$HOME/.config/theme-system"
+source "$ROOT/lib/common.sh"
+
+ensure_state_dir
+
+list_modes() {
+  ls -1 "$WAYBAR_MODE_DIR" | sort
+}
+
+set_mode() {
+  local mode="${1:-}"
+
+  [[ -n "$mode" ]] || {
+    echo "waybar-mode set <mode>"
+    exit 1
+  }
+
+  apply_waybar_mode "$mode" || {
+    echo "Mode not found: $mode"
+    exit 1
+  }
+
+  reload_ui
+  notify "Waybar mode changed" "$mode"
+}
+
+current_mode() {
+  [[ -f "$STATE_WAYBAR_MODE" ]] && cat "$STATE_WAYBAR_MODE"
+}
+
+case "${1:-}" in
+list)
+  list_modes
+  ;;
+set)
+  set_mode "$2"
+  ;;
+current)
+  current_mode
+  ;;
+*)
+  echo "Usage:"
+  echo "  waybar-mode list"
+  echo "  waybar-mode set <mode>"
+  echo "  waybar-mode current"
+  ;;
+esac

@@ -1,45 +1,84 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
+set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TARGET="$HOME"
 
+# ---- options ----
+RESTOW=false
+VERBOSE=false
+
+for arg in "${@:-}"; do
+  case "$arg" in
+    --restow|-R) RESTOW=true ;;
+    --verbose|-v) VERBOSE=true ;;
+  esac
+done
+
+# ---- logging ----
+log() { printf "%s\n" "$*"; }
+info() { printf "• %s\n" "$*"; }
+
+# ---- dependency check ----
 require() {
-  command -v "$1" >/dev/null 2>&1 || {
+  if ! command -v "$1" >/dev/null 2>&1; then
     echo "Missing dependency: $1"
     exit 1
-  }
+  fi
 }
 
 require stow
-require git
 
-echo "Dotfiles directory: $DOTFILES_DIR"
+STOW_FLAGS=()
+$RESTOW && STOW_FLAGS+=("-R")
+$VERBOSE && STOW_FLAGS+=("-v")
 
-mkdir -p \
-  "$HOME/.config" \
-  "$HOME/.local/bin"
+cd "$DOTFILES_DIR"
 
-echo
-echo "Installing apps..."
-cd "$DOTFILES_DIR/apps"
-stow -R -t "$HOME" */
+info "Dotfiles directory: $DOTFILES_DIR"
+info "Target directory: $TARGET"
 
-echo
-echo "Installing shell configs..."
-cd "$DOTFILES_DIR/shells"
-stow -R -t "$HOME" */
+# ---- stow packages ----
+stow_group() {
+  local group="$1"
 
-echo
-echo "Installing scripts..."
-cd "$DOTFILES_DIR/scripts"
-stow -R -t "$HOME" */
+  [ -d "$group" ] || return
 
-echo
-echo "Installing themes..."
-cd "$DOTFILES_DIR/themes"
-stow -R -t "$HOME" */
+  for pkg in "$group"/*; do
+    [ -d "$pkg" ] || continue
 
-echo
-echo "Bootstrap complete."
-echo "You can safely run this script multiple times."
-echo "Existing symlinks will be updated."
+    local name
+    name="$(basename "$pkg")"
+
+    info "Stowing $group/$name"
+    stow "${STOW_FLAGS[@]}" -t "$TARGET" "$pkg"
+  done
+}
+
+stow_group apps
+stow_group shells
+stow_group scripts
+stow_group themes
+
+# ---- theme system bootstrap ----
+info "Preparing theme system"
+
+mkdir -p "$HOME/.config/theme-system/state"
+
+if [ ! -L "$HOME/.config/themes/current" ]; then
+  info "Setting default theme → catppuccin/mocha"
+  ln -s \
+    "$HOME/.config/themes/catppuccin/mocha" \
+    "$HOME/.config/themes/current"
+fi
+
+# ---- ensure required dirs exist ----
+mkdir -p "$HOME/.local/bin"
+
+# ---- summary ----
+log
+log "Bootstrap complete."
+log
+log "Optional:"
+log "  ./bootstrap.sh --restow   # rebuild symlinks"
+log "  ./bootstrap.sh --verbose  # debug stow output"

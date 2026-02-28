@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$HOME/.config/theme-system"
+source "$ROOT/lib/common.sh"
+
+ensure_state_dir
+
+list_themes() {
+  find "$THEMES_DIR" -mindepth 2 -maxdepth 2 -type d \
+    | sed "s|$THEMES_DIR/||" \
+    | sort
+}
+
+apply_theme() {
+  local theme="${1:-}"
+  local variant="${2:-}"
+  local mode="${3:-}"
+
+  [[ -n "$theme" && -n "$variant" ]] || {
+    echo "theme apply <theme> <variant> [mode]"
+    exit 1
+  }
+
+  set_theme_link "$theme" "$variant" || {
+    echo "Theme not found: $theme/$variant"
+    exit 1
+  }
+
+  if [[ -n "$mode" ]]; then
+    apply_waybar_mode "$mode" || {
+      echo "Mode not found: $mode"
+      exit 1
+    }
+  else
+    mode="$(detect_mode)"
+    apply_waybar_mode "$mode"
+  fi
+
+  reload_ui
+
+  pretty="$(format_theme_name "$theme" "$variant")"
+  notify "Theme changed" "$pretty • mode: $mode"
+}
+
+current_theme() {
+  current_theme_name
+}
+
+case "${1:-}" in
+list)
+  list_themes
+  ;;
+set)
+  apply_theme "$2" "$3"
+  ;;
+apply)
+  apply_theme "$2" "$3" "$4"
+  ;;
+current)
+  current_theme
+  ;;
+*)
+  echo "Usage:"
+  echo "  theme list"
+  echo "  theme set <theme> <variant>"
+  echo "  theme apply <theme> <variant> [mode]"
+  echo "  theme current"
+  ;;
+esac

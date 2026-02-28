@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$HOME/.config/theme-system"
+source "$ROOT/lib/common.sh"
+
+ensure_state_dir
+
+mapfile -t modes < <(ls -1 "$WAYBAR_MODE_DIR" | sort)
+
+(( ${#modes[@]} > 0 )) || {
+  echo "No Waybar modes found"
+  exit 1
+}
+
+current="$(detect_mode)"
+next=""
+
+for i in "${!modes[@]}"; do
+  if [[ "${modes[$i]}" == "$current" ]]; then
+    next="${modes[$(( (i + 1) % ${#modes[@]} ))]}"
+    break
+  fi
+done
+
+[[ -n "$next" ]] || next="${modes[0]}"
+
+apply_waybar_mode "$next"
+reload_ui
+notify "Waybar mode toggled" "$current → $next"

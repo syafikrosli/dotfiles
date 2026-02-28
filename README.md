@@ -20,6 +20,14 @@ Primary environment:
 
 ---
 
+# Quick Start
+
+git clone <repo>
+cd dotfiles
+./bootstrap.sh
+
+---
+
 # Philosophy
 
 This repository behaves like a small configuration framework.
@@ -35,11 +43,13 @@ Goals:
 
 Basic workflow:
 
-Install → Stow → Ready to use
+Clone → Bootstrap → Ready to use
 
 ---
 
 # Repository Structure
+
+Each top-level directory is deployed independently via GNU Stow, allowing selective installation and modular configuration management.
 
 ```
 dotfiles
@@ -47,7 +57,7 @@ dotfiles
 ├── scripts/     # Theme system + utilities
 ├── shells/      # Shell environments
 ├── themes/      # Theme packs
-└── bootstrap.sh # Initial setup helper
+└── bootstrap.sh # Environment bootstrap
 ```
 
 ---
@@ -56,7 +66,7 @@ dotfiles
 
 Application configurations deployed using **GNU Stow**.
 
-Current config apps included:
+Current applications included:
 
 ```
 hypr (hypridle)
@@ -126,15 +136,15 @@ Themes are structured for cross-application styling.
 themes/<theme>/.config/themes/<theme>/<variant>/
 ```
 
-Example:
+Example themes:
 
 ```
-themes/catppuccin
-themes/everforest
-themes/gruvbox
+catppuccin
+everforest
+gruvbox
 ```
 
-Current default:
+Default theme:
 
 ```
 catppuccin mocha
@@ -144,54 +154,106 @@ catppuccin mocha
 
 # Installation
 
-## Run bootstrap
+Clone the repository:
+
+```
+git clone <repo>
+cd dotfiles
+```
+
+Run bootstrap:
 
 ```
 ./bootstrap.sh
 ```
 
-What bootstrap does
+Bootstrap performs:
 
-Bootstrap performs the initial setup for the environment.
-* Deploys dotfiles using `stow`
-* Initializes the theme system (`~/.config/themes/current`)
-* Creates required state directories
+* Deploys all modules using `stow`
+* Creates required directories
+* Initializes the theme system
+* Sets the default theme
 * Sets a default Waybar mode
 * Generates Waybar `style.css`
-* Links the active Waybar `config.jsonc`
+* Links the active Waybar configuration
 
-Run this once after cloning the repository or when setting up on a new system.
+After this step the environment is ready to use.
 
 ---
 
-## Manual installation
+# Bootstrap Options
 
-Apps:
+Bootstrap is designed to be safe to run multiple times.
+Bootstrap supports several flags:
+
+Dry run (preview changes)
+
+```
+./bootstrap.sh --dry-run
+```
+
+Verbose mode
+
+```
+./bootstrap.sh --verbose
+```
+
+Adopt existing files into stow
+
+```
+./bootstrap.sh --adopt
+```
+
+Restow everything
+
+```
+./bootstrap.sh --restow
+```
+
+Automatically install required dependencies (Arch Linux)
+
+```
+./bootstrap.sh --install-deps
+```
+
+Example:
+
+```
+./bootstrap.sh --restow --verbose
+```
+
+---
+
+# Manual Installation
+
+If you prefer manual control:
+
+Apps
 
 ```
 cd apps
-stow -t $HOME *
+stow -t $HOME */
 ```
 
-Shells:
+Shells
 
 ```
 cd ../shells
-stow -t $HOME *
+stow -t $HOME */
 ```
 
-Scripts:
+Scripts
 
 ```
 cd ../scripts
-stow -t $HOME *
+stow -t $HOME */
 ```
 
-Themes:
+Themes
 
 ```
 cd ../themes
-stow -t $HOME *
+stow -t $HOME */
 ```
 
 ---
@@ -208,17 +270,17 @@ Supported components:
 * Fuzzel
 * Hyprlock
 
-Themes currently available:
+Available themes:
 
-```
-catppuccin (mocha)
-everforest (dark-hard)
-gruvbox (dark)
-```
+
+* catppuccin (mocha)
+* everforest (dark-hard)
+* gruvbox (dark)
+
 
 ---
 
-# Theme Command Reference
+# Theme Commands
 
 List available themes:
 
@@ -232,13 +294,13 @@ Set a theme:
 theme set <theme> <variant>
 ```
 
-Apply a theme and optionally set Waybar mode:
+Apply a theme and optionally change Waybar mode:
 
 ```
 theme apply <theme> <variant> [mode]
 ```
 
-Check current theme:
+Show current theme:
 
 ```
 theme current
@@ -255,7 +317,7 @@ theme apply catppuccin mocha minimal
 
 # Waybar Modes
 
-Switch modes manually:
+Switch modes:
 
 ```
 waybar-mode <mode>
@@ -269,50 +331,46 @@ waybar-toggle
 
 Available modes:
 
-```
-informative
-minimal
-```
+* informative
+* minimal
+
 
 Default mode:
 
-```
-informative
-```
+* informative
 
 ---
 
 # Requirements
 
-Recommended packages:
+Core dependencies:
 
-```
-stow
-git
-niri
-waybar
-swaync
-```
+* stow
+* git
 
-Optional tools:
+Desktop components used:
 
-```
-eza
-bat
-```
+* niri
+* waybar
+* swaync
+
+Optional utilities:
+
+* eza
+* bat
 
 ---
 
 # Bootstrapping Behavior
 
-Bootstrap installs configurations into:
+Bootstrap installs files into:
 
 ```
 ~/.config
 ~/.local/bin
 ```
 
-If these directories do not exist, they are created automatically.
+Required directories are created automatically.
 
 Because the repository follows standard XDG paths, manual stowing will always work.
 
@@ -326,9 +384,9 @@ stow -t $HOME apps
 
 # Design Notes
 
-This setup is designed to behave closer to a **lightweight desktop configuration layer** rather than a basic dotfiles repository.
+This setup behaves closer to a **lightweight desktop configuration layer** than a basic dotfiles repository.
 
-Features include:
+Features:
 
 * Theme-aware configuration
 * Multiple UI layouts
@@ -336,15 +394,17 @@ Features include:
 * Stow-based deployment
 * Modular structure
 
-## Testing
+---
+
+# Testing
 
 This configuration is regularly tested on:
 
-- Clean Arch Linux installs
-- EndeavourOS live ISO environments
+* Clean Arch Linux installs
+* EndeavourOS live environments
 
 ---
 
 # Notes
 
-This repository is mainly designed for personal use, but it is structured so that others can explore or experiment with it.
+This repository is primarily for personal use but is structured so others can explore or adapt it.
